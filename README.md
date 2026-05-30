@@ -33,7 +33,6 @@ This is the eidos landing page — a single `index.html` file styled as the firs
 - **Multi-window navigation** — ◀ ▶ buttons cycle through the manifesto, fritzdutz.com, yongkang.dev, and the follow page
 - **Minimize to dock** — windows minimize into folder icons with an animated scale transition; clicking restores them
 - **Follow page** — an embedded subscribe form backed by Supabase; no third-party embed, no external redirects
-- **Single file** — everything (HTML, CSS, JS) lives in one `index.html` with zero build step and zero dependencies
 
 ### Stack
 
@@ -47,26 +46,8 @@ This is the eidos landing page — a single `index.html` file styled as the firs
 
 ---
 
-## Running it locally
-
-No build step needed — just open the file.
-
-```bash
-git clone https://github.com/fritz-dutz/eidos.git
-cd eidos
-open index.html
-```
-
-Or serve it locally if you need the Supabase form to work (browsers block `fetch` on `file://`):
-
-```bash
-npx serve .
-```
-
----
-
 ## Follow along
 
-We are building in public. Follow updates at [eidos.computer](http://eidos.computer) or subscribe directly from the site.
+Follow updates by subscribing directly on the site.
 
 — Fritz & Yongkang
