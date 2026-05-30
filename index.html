@@ -775,8 +775,19 @@
   .tool.back-btn:hover, .tool.fwd-btn:hover, .tool.refresh-btn:hover { background: var(--chrome-light); }
   .tool.nav-disabled { opacity: 0.35; cursor: default !important; }
 
-  /* Globe look-at effect */
-  .globe { cursor: default; transform-style: preserve-3d; }
+  /* Circular logo dot */
+  .logo-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--ink);
+    border-radius: 50%;
+    vertical-align: 4px;
+    margin-left: 2px;
+  }
+
+  /* Globe */
+  .globe { cursor: default; }
 
   /* Refresh spin */
   @keyframes toolSpin {
@@ -851,7 +862,7 @@
     <div class="document" id="doc">
 
       <div class="doc-banner">
-        <div class="logo">eidos.</div>
+        <div class="logo">eidos<span class="logo-dot"></span></div>
       </div>
 
       <h1 class="doc-title">The last browser for knowledge workers.</h1>
@@ -882,12 +893,7 @@
 
       <hr class="doc-rule" />
 
-      <p>A few people whose work shapes how we think:</p>
-      <p>
-        <strong>Ivan Zhao</strong> — taste as a non-negotiable. The way he cares about each pixel, the culture he built at Notion.<br/>
-        <strong>Andy Matuschak</strong> — knowledge that compounds. Concept-first, evergreen, provenance-heavy.<br/>
-        <strong>Ryo Lu</strong> — head of design at Cursor. What taste looks like inside a developer tool.
-      </p>
+      <p>A few people whose work shapes how we think: <strong>Ivan Zhao</strong>, <strong>Andy Matuschak</strong>, <strong>Ryo Lu</strong>.</p>
 
       <div class="footer-note">
         <span>- end of document -</span>
@@ -1063,20 +1069,7 @@
       el.addEventListener('animationend', function() { el.classList.remove('spinning'); }, { once: true });
     }
 
-    function attachGlobe(win) {
-      var globe = win.querySelector('.globe');
-      if (!globe || globe._globeRegistered) return;
-      globe._globeRegistered = true;
-      globe.style.transition = 'transform 0.1s ease-out';
-      globe.addEventListener('mousemove', function(e) {
-        var rect = globe.getBoundingClientRect();
-        var dx = (e.clientX - (rect.left + rect.width  / 2)) / (rect.width  / 2);
-        var dy = (e.clientY - (rect.top  + rect.height / 2)) / (rect.height / 2);
-        var rx = (-dy * 22).toFixed(1), ry = (dx * 22).toFixed(1);
-        globe.style.transform = 'perspective(55px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
-      });
-      globe.addEventListener('mouseleave', function() { globe.style.transform = ''; });
-    }
+
 
     function setNavButtons(mainWin, idx) {
       var b = mainWin.querySelector('.tool.back-btn'), f = mainWin.querySelector('.tool.fwd-btn');
@@ -1194,7 +1187,7 @@
       document.body.appendChild(win); bringToFront(win);
       attachDrag(win); attachResize(win); attachWindowControls(win);
       attachClose(win, { removeOnClose: false }); // hide, not remove — so registry stays valid
-      attachSubNav(win); attachGlobe(win);
+      attachSubNav(win);
       siteWindows[url] = win;
       var ifr = win.querySelector('iframe'), fb = win.querySelector('.iframe-fallback'), st = win.querySelector('.statusbar span');
       var loaded = false;
@@ -1244,7 +1237,7 @@
       win.style.width = Math.min(440, window.innerWidth - 40) + 'px';
       document.body.appendChild(win); bringToFront(win);
       attachDrag(win); attachWindowControls(win);
-      attachClose(win, { removeOnClose: false }); attachGlobe(win);
+      attachClose(win, { removeOnClose: false });
       formWindowRef = win;
       wireForm(win.querySelector('.subscribe-form'), win.querySelector('.form-state'), win.querySelector('.success-state'), win.querySelector('.statusbar span'), win.querySelector('#sp-email'), win);
     }
@@ -1276,7 +1269,7 @@
     var mainBrowser = document.querySelector('.browser');
     if (mainBrowser) {
       attachDrag(mainBrowser); attachResize(mainBrowser); attachWindowControls(mainBrowser);
-      attachMainNav(mainBrowser); attachGlobe(mainBrowser);
+      attachMainNav(mainBrowser);
     }
 
     // Wire inline follow form
