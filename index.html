@@ -812,23 +812,19 @@
 
   /* Minimize / restore animations */
   .browser.minimizing {
-    animation: winMinimize 0.2s ease-in forwards;
+    animation: winMinimize 0.22s ease-in forwards;
     pointer-events: none;
-    transform-origin: bottom left;
   }
   .browser.restoring {
-    animation: winRestore 0.22s ease-out forwards;
-    transform-origin: bottom left;
+    animation: winRestore 0.2s ease-out forwards;
   }
   @keyframes winMinimize {
-    0%   { opacity: 1; transform: scale(1)    translateY(0); }
-    40%  { opacity: 0.7; transform: scale(0.6) translateY(12px); }
-    100% { opacity: 0; transform: scale(0.05) translateY(40px) translateX(-40px); }
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0); }
   }
   @keyframes winRestore {
-    0%   { opacity: 0; transform: scale(0.05) translateY(40px) translateX(-40px); }
-    60%  { opacity: 1; transform: scale(1.03) translateY(-2px); }
-    100% { opacity: 1; transform: scale(1)    translateY(0); }
+    0%   { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
   }
 </style>
 </head>
@@ -1041,9 +1037,12 @@
       if (win._dockItem) { win._dockItem.remove(); win._dockItem = null; }
       win.style.display = '';
       bringToFront(win);
+      // Restore from same direction it minimized toward
+      if (win._minimizeOrigin) win.style.transformOrigin = win._minimizeOrigin;
       win.classList.add('restoring');
       win.addEventListener('animationend', function() {
         win.classList.remove('restoring');
+        win.style.transformOrigin = '';
       }, { once: true });
     }
 
@@ -1057,10 +1056,17 @@
       item.addEventListener('click', function() { restoreWindow(win); });
       win._dockItem = item;
       ensureDock().appendChild(item);
+      // Point transform-origin at the dock folder so window shrinks toward it
+      var wr = win.getBoundingClientRect(), dr = item.getBoundingClientRect();
+      var ox = (((dr.left + dr.width  / 2) - wr.left) / wr.width  * 100).toFixed(1) + '%';
+      var oy = (((dr.top  + dr.height / 2) - wr.top)  / wr.height * 100).toFixed(1) + '%';
+      win._minimizeOrigin = ox + ' ' + oy;
+      win.style.transformOrigin = win._minimizeOrigin;
       win.classList.add('minimizing');
       win.addEventListener('animationend', function() {
         win.classList.remove('minimizing');
         win.classList.add('minimized');
+        win.style.transformOrigin = '';
       }, { once: true });
     }
 
