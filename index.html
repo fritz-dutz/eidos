@@ -809,6 +809,27 @@
     .sitemark { font-size: 13px; }
     .credits { font-size: 9px; }
   }
+
+  /* Minimize / restore animations */
+  .browser.minimizing {
+    animation: winMinimize 0.2s ease-in forwards;
+    pointer-events: none;
+    transform-origin: bottom left;
+  }
+  .browser.restoring {
+    animation: winRestore 0.22s ease-out forwards;
+    transform-origin: bottom left;
+  }
+  @keyframes winMinimize {
+    0%   { opacity: 1; transform: scale(1)    translateY(0); }
+    40%  { opacity: 0.7; transform: scale(0.6) translateY(12px); }
+    100% { opacity: 0; transform: scale(0.05) translateY(40px) translateX(-40px); }
+  }
+  @keyframes winRestore {
+    0%   { opacity: 0; transform: scale(0.05) translateY(40px) translateX(-40px); }
+    60%  { opacity: 1; transform: scale(1.03) translateY(-2px); }
+    100% { opacity: 1; transform: scale(1)    translateY(0); }
+  }
 </style>
 </head>
 <body>
@@ -901,13 +922,13 @@
 
       <div class="footer-note">
         <span>- end of document -</span>
-        <span><a href="https://fritzdutz.com" class="open-window" data-title="fritzdutz.com" data-url="https://fritzdutz.com" data-dock="fritzdutz|.com">fritz</a> &amp; <a href="https://yongkang.dev" class="open-window" data-title="yongkang.dev" data-url="https://yongkang.dev">yongkang</a></span>
+        <span><a href="https://fritzdutz.com" class="open-window" data-title="fritzdutz.com" data-url="https://fritzdutz.com" data-dock="fritzdutz|.com">fritz</a> &amp; <a href="https://yongkang.dev" class="open-window" data-title="yongkang.dev" data-url="https://yongkang.dev" data-dock="yongkang|.dev">yongkang</a></span>
       </div>
     </div>
 
     <div class="form-page" style="display:none;flex:1;background:#F4F1E8;border:1px solid var(--chrome-darker);box-shadow:inset 1px 1px 0 var(--chrome-dark);overflow-y:auto;padding:20px 26px 30px;">
       <div id="main-form-state">
-        <h2 style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;margin-bottom:16px;">Follow our updates.</h2>
+        <h2 style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;margin-bottom:22px;">Follow our updates.</h2>
         <form id="main-subscribe-form" novalidate style="font-family:'IBM Plex Mono',monospace;">
           <label for="main-sub-name" style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:5px;">Name <span style="opacity:.5">(optional)</span></label>
           <input id="main-sub-name" name="name" type="text" autocomplete="given-name" style="width:100%;background:#fff;border:1px solid var(--chrome-darker);box-shadow:inset 1px 1px 0 var(--chrome-dark);padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);margin-bottom:12px;" />
@@ -1014,17 +1035,20 @@
     }
 
     function restoreWindow(win) {
-      if (!win.classList.contains('minimized')) { bringToFront(win); return; }
+      if (win.classList.contains('minimizing')) return;
+      if (!win.classList.contains('minimized') && !win.classList.contains('restoring')) { bringToFront(win); return; }
       win.classList.remove('minimized');
       if (win._dockItem) { win._dockItem.remove(); win._dockItem = null; }
       win.style.display = '';
       bringToFront(win);
+      win.classList.add('restoring');
+      win.addEventListener('animationend', function() {
+        win.classList.remove('restoring');
+      }, { once: true });
     }
 
     function minimizeWindow(win) {
-      if (win.classList.contains('minimized')) return;
-      win.classList.add('minimized');
-      var dock = ensureDock();
+      if (win.classList.contains('minimized') || win.classList.contains('minimizing')) return;
       var item = document.createElement('div');
       item.className = 'dock-item';
       item.innerHTML = '<span class="dock-folder" aria-hidden="true"></span><span class="dock-label"></span>';
@@ -1033,6 +1057,11 @@
       item.addEventListener('click', function() { restoreWindow(win); });
       win._dockItem = item;
       ensureDock().appendChild(item);
+      win.classList.add('minimizing');
+      win.addEventListener('animationend', function() {
+        win.classList.remove('minimizing');
+        win.classList.add('minimized');
+      }, { once: true });
     }
 
     function toggleMaximize(win) {
