@@ -769,6 +769,27 @@
     line-height: 1.5;
   }
 
+  /* Nav tool buttons */
+  .tool.back-btn, .tool.fwd-btn, .tool.refresh-btn { cursor: pointer; }
+  .tool.back-btn:hover, .tool.fwd-btn:hover, .tool.refresh-btn:hover { background: var(--chrome-light); }
+  .tool.nav-disabled { opacity: 0.35; cursor: default !important; }
+
+  /* Globe roll */
+  .globe { cursor: pointer; }
+  @keyframes globeRoll {
+    0%   { transform: rotateY(0deg); }
+    60%  { transform: rotateY(210deg) scale(1.07); }
+    100% { transform: rotateY(360deg); }
+  }
+  .globe.spinning { animation: globeRoll 0.7s ease-in-out; }
+
+  /* Refresh spin */
+  @keyframes toolSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .tool.refresh-btn.spinning { display: inline-block; animation: toolSpin 0.4s linear; }
+
   @media (max-width: 700px) {
     .browser { height: calc(100vh - 60px); }
     .document { padding: 14px 14px 20px; font-size: 11px; }
@@ -810,9 +831,9 @@
     </div>
 
     <div class="toolbar">
-      <span class="tool">◀</span>
-      <span class="tool">▶</span>
-      <span class="tool">⟳</span>
+      <span class="tool back-btn" title="Back">◀</span>
+      <span class="tool fwd-btn" title="Forward">▶</span>
+      <span class="tool refresh-btn" title="Refresh">⟳</span>
       <span class="tool">⌂</span>
       <span class="tool">◉</span>
       <span class="tool">★</span>
@@ -836,7 +857,7 @@
 
       <div class="doc-banner">
         <div class="logo">eidos.</div>
-        <div class="tagline">THE LAST BROWSER FOR KNOWLEDGE WORKERS</div>
+        <div class="tagline">MANIFESTO</div>
       </div>
 
       <h1 class="doc-title">The last browser for knowledge workers.</h1>
@@ -871,13 +892,12 @@
       <p>
         <strong>Ivan Zhao</strong> — taste as a non-negotiable. The way he cares about each pixel, the culture he built at Notion.<br/>
         <strong>Andy Matuschak</strong> — knowledge that compounds. Concept-first, evergreen, provenance-heavy.<br/>
-        <strong>The Arc team</strong> — proving that browser chrome can have a soul.<br/>
-        <strong>Nous Research</strong> — what it means for AI to reflect and consolidate, not just respond.
+        <strong>Ryo Lu</strong> — head of design at Cursor. What taste looks like inside a developer tool.
       </p>
 
       <div class="footer-note">
         <span>- end of document -</span>
-        <span><a href="https://fritzdutz.com" class="open-window" data-title="fritzdutz.com" data-url="https://fritzdutz.com">fritz</a> &amp; <a href="https://yongkang.dev" class="open-window" data-title="yongkang.dev" data-url="https://yongkang.dev">yongkang</a></span>
+        <span><a href="https://fritzdutz.com" class="open-window" data-title="fritzdutz.com" data-url="https://fritzdutz.com" data-dock="Fritz.Dutz|.com">fritz</a> &amp; <a href="https://yongkang.dev" class="open-window" data-title="yongkang.dev" data-url="https://yongkang.dev">yongkang</a></span>
       </div>
     </div>
 
@@ -893,504 +913,303 @@
     let topZ = 10;
     let spawnOffset = 0;
 
-    function clamp(val, min, max) {
-      return Math.max(min, Math.min(max, val));
-    }
+    var MAIN_PAGES = [
+      { type: 'doc',    title: 'eidos.',        docTitle: 'The last browser for knowledge workers.', url: 'http://www.eidos.computer/manifesto/v001.html' },
+      { type: 'iframe', title: 'fritzdutz.com', docTitle: 'fritzdutz.com',                           url: 'https://fritzdutz.com' },
+      { type: 'iframe', title: 'yongkang.dev',  docTitle: 'yongkang.dev',                            url: 'https://yongkang.dev' }
+    ];
 
-    function bringToFront(win) {
-      topZ += 1;
-      win.style.zIndex = topZ;
-    }
+    function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+    function bringToFront(win) { topZ += 1; win.style.zIndex = topZ; }
 
     function detachCentering(win) {
       if (win.classList.contains('dragged')) return;
-      const rect = win.getBoundingClientRect();
-      win.style.left = rect.left + 'px';
-      win.style.top = rect.top + 'px';
-      win.style.width = rect.width + 'px';
-      win.style.height = rect.height + 'px';
+      var rect = win.getBoundingClientRect();
+      win.style.left = rect.left + 'px'; win.style.top = rect.top + 'px';
+      win.style.width = rect.width + 'px'; win.style.height = rect.height + 'px';
       win.classList.add('dragged');
     }
 
     function attachDrag(win) {
-      const titlebar = win.querySelector('.titlebar');
+      var titlebar = win.querySelector('.titlebar');
       if (!titlebar) return;
-      let dragging = false;
-      let offsetX = 0;
-      let offsetY = 0;
-
+      var dragging = false, offsetX = 0, offsetY = 0;
       function startDrag(clientX, clientY, target) {
         if (target.closest && target.closest('.titlebar-buttons')) return false;
-        // If maximized, restore to normal first - then position under cursor
         if (win.classList.contains('maximized')) {
           toggleMaximize(win);
-          const rect = win.getBoundingClientRect();
-          // Re-center under cursor
-          const newLeft = clientX - rect.width / 2;
-          const newTop = clientY - 14;
-          win.style.left = newLeft + 'px';
-          win.style.top = newTop + 'px';
-          offsetX = clientX - newLeft;
-          offsetY = clientY - newTop;
+          var rect = win.getBoundingClientRect();
+          var newLeft = clientX - rect.width / 2, newTop = clientY - 14;
+          win.style.left = newLeft + 'px'; win.style.top = newTop + 'px';
+          offsetX = clientX - newLeft; offsetY = clientY - newTop;
         } else {
           detachCentering(win);
-          const rect = win.getBoundingClientRect();
-          offsetX = clientX - rect.left;
-          offsetY = clientY - rect.top;
+          var rect2 = win.getBoundingClientRect();
+          offsetX = clientX - rect2.left; offsetY = clientY - rect2.top;
         }
-        dragging = true;
-        bringToFront(win);
-        document.body.style.userSelect = 'none';
-        return true;
+        dragging = true; bringToFront(win); document.body.style.userSelect = 'none'; return true;
       }
-
       function moveDrag(clientX, clientY) {
         if (!dragging) return;
-        const w = win.offsetWidth;
-        const minX = 20 - w + 80;
-        const maxX = window.innerWidth - 80;
-        const minY = 0;
-        const maxY = window.innerHeight - 40;
-        const x = clamp(clientX - offsetX, minX, maxX);
-        const y = clamp(clientY - offsetY, minY, maxY);
-        win.style.left = x + 'px';
-        win.style.top = y + 'px';
+        var w = win.offsetWidth;
+        win.style.left = clamp(clientX - offsetX, 20 - w + 80, window.innerWidth - 80) + 'px';
+        win.style.top  = clamp(clientY - offsetY, 0, window.innerHeight - 40) + 'px';
       }
-
-      function endDrag() {
-        dragging = false;
-        document.body.style.userSelect = '';
-      }
-
-      titlebar.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
-        if (startDrag(e.clientX, e.clientY, e.target)) e.preventDefault();
-      });
-      document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+      function endDrag() { dragging = false; document.body.style.userSelect = ''; }
+      titlebar.addEventListener('mousedown', function(e) { if (e.button !== 0) return; if (startDrag(e.clientX, e.clientY, e.target)) e.preventDefault(); });
+      document.addEventListener('mousemove', function(e) { moveDrag(e.clientX, e.clientY); });
       document.addEventListener('mouseup', endDrag);
-
-      titlebar.addEventListener('touchstart', (e) => {
-        const t = e.touches[0];
-        if (startDrag(t.clientX, t.clientY, e.target)) e.preventDefault();
-      }, { passive: false });
-      document.addEventListener('touchmove', (e) => {
-        if (!dragging) return;
-        const t = e.touches[0];
-        moveDrag(t.clientX, t.clientY);
-        e.preventDefault();
-      }, { passive: false });
+      titlebar.addEventListener('touchstart', function(e) { var t = e.touches[0]; if (startDrag(t.clientX, t.clientY, e.target)) e.preventDefault(); }, { passive: false });
+      document.addEventListener('touchmove', function(e) { if (!dragging) return; var t = e.touches[0]; moveDrag(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
       document.addEventListener('touchend', endDrag);
-
-      win.addEventListener('mousedown', () => bringToFront(win));
+      win.addEventListener('mousedown', function() { bringToFront(win); });
     }
 
     function attachResize(win) {
-      const handle = win.querySelector('.resize-handle');
+      var handle = win.querySelector('.resize-handle');
       if (!handle) return;
-      let resizing = false;
-      let startX = 0;
-      let startY = 0;
-      let startW = 0;
-      let startH = 0;
-
-      const minW = 360;
-      const minH = 280;
-
+      var resizing = false, startX = 0, startY = 0, startW = 0, startH = 0;
       function startResize(clientX, clientY) {
         detachCentering(win);
-        const rect = win.getBoundingClientRect();
-        startX = clientX;
-        startY = clientY;
-        startW = rect.width;
-        startH = rect.height;
-        resizing = true;
-        bringToFront(win);
-        document.body.style.userSelect = 'none';
+        var rect = win.getBoundingClientRect();
+        startX = clientX; startY = clientY; startW = rect.width; startH = rect.height;
+        resizing = true; bringToFront(win); document.body.style.userSelect = 'none';
       }
-
       function moveResize(clientX, clientY) {
         if (!resizing) return;
-        const maxW = window.innerWidth - 8;
-        const maxH = window.innerHeight - 8;
-        const w = clamp(startW + (clientX - startX), minW, maxW);
-        const h = clamp(startH + (clientY - startY), minH, maxH);
-        win.style.width = w + 'px';
-        win.style.height = h + 'px';
+        win.style.width  = clamp(startW + (clientX - startX), 360, window.innerWidth  - 8) + 'px';
+        win.style.height = clamp(startH + (clientY - startY), 280, window.innerHeight - 8) + 'px';
       }
-
-      function endResize() {
-        resizing = false;
-        document.body.style.userSelect = '';
-      }
-
-      handle.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
-        e.preventDefault();
-        e.stopPropagation();
-        startResize(e.clientX, e.clientY);
-      });
-      document.addEventListener('mousemove', (e) => moveResize(e.clientX, e.clientY));
+      function endResize() { resizing = false; document.body.style.userSelect = ''; }
+      handle.addEventListener('mousedown', function(e) { if (e.button !== 0) return; e.preventDefault(); e.stopPropagation(); startResize(e.clientX, e.clientY); });
+      document.addEventListener('mousemove', function(e) { moveResize(e.clientX, e.clientY); });
       document.addEventListener('mouseup', endResize);
-
-      handle.addEventListener('touchstart', (e) => {
-        const t = e.touches[0];
-        e.preventDefault();
-        e.stopPropagation();
-        startResize(t.clientX, t.clientY);
-      }, { passive: false });
-      document.addEventListener('touchmove', (e) => {
-        if (!resizing) return;
-        const t = e.touches[0];
-        moveResize(t.clientX, t.clientY);
-        e.preventDefault();
-      }, { passive: false });
+      handle.addEventListener('touchstart', function(e) { var t = e.touches[0]; e.preventDefault(); e.stopPropagation(); startResize(t.clientX, t.clientY); }, { passive: false });
+      document.addEventListener('touchmove', function(e) { if (!resizing) return; var t = e.touches[0]; moveResize(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
       document.addEventListener('touchend', endResize);
     }
 
     function ensureDock() {
-      let dock = document.querySelector('.dock');
-      if (!dock) {
-        dock = document.createElement('div');
-        dock.className = 'dock';
-        document.body.appendChild(dock);
-      }
+      var dock = document.querySelector('.dock');
+      if (!dock) { dock = document.createElement('div'); dock.className = 'dock'; document.body.appendChild(dock); }
       return dock;
     }
 
     function getWindowTitle(win) {
-      const t = win.querySelector('.titlebar-left span:last-child');
+      var t = win.querySelector('.titlebar-left span:last-child');
       return t ? t.textContent.trim() : 'window';
     }
 
     function minimizeWindow(win) {
       if (win.classList.contains('minimized')) return;
       win.classList.add('minimized');
-
-      const dock = ensureDock();
-      const item = document.createElement('div');
+      var dock = ensureDock();
+      var item = document.createElement('div');
       item.className = 'dock-item';
-      item.innerHTML = `
-        <span class="dock-folder" aria-hidden="true"></span>
-        <span class="dock-label"></span>
-      `;
-      item.querySelector('.dock-label').textContent = getWindowTitle(win);
-      item.addEventListener('click', () => {
-        win.classList.remove('minimized');
-        item.remove();
-        bringToFront(win);
-      });
-      // Reference so we can clean up if window gets closed while minimized
+      item.innerHTML = '<span class="dock-folder" aria-hidden="true"></span><span class="dock-label"></span>';
+      var raw = win._dockLabel || getWindowTitle(win);
+      item.querySelector('.dock-label').innerHTML = raw.replace(/\|/g, '<br/>');
+      item.addEventListener('click', function() { win.classList.remove('minimized'); item.remove(); bringToFront(win); });
       win._dockItem = item;
       dock.appendChild(item);
     }
 
     function toggleMaximize(win) {
-      if (win.classList.contains('minimized')) {
-        win.classList.remove('minimized');
-        if (win._dockItem) { win._dockItem.remove(); win._dockItem = null; }
-      }
+      if (win.classList.contains('minimized')) { win.classList.remove('minimized'); if (win._dockItem) { win._dockItem.remove(); win._dockItem = null; } }
       if (win.classList.contains('maximized')) {
         win.classList.remove('maximized');
-        // Restore inline styles
-        if (win._savedGeom) {
-          win.style.left = win._savedGeom.left;
-          win.style.top = win._savedGeom.top;
-          win.style.width = win._savedGeom.width;
-          win.style.height = win._savedGeom.height;
-        }
+        if (win._savedGeom) { win.style.left = win._savedGeom.left; win.style.top = win._savedGeom.top; win.style.width = win._savedGeom.width; win.style.height = win._savedGeom.height; }
       } else {
         detachCentering(win);
-        win._savedGeom = {
-          left: win.style.left,
-          top: win.style.top,
-          width: win.style.width,
-          height: win.style.height
-        };
+        win._savedGeom = { left: win.style.left, top: win.style.top, width: win.style.width, height: win.style.height };
         win.classList.add('maximized');
-        // Clear inline so the .maximized rules win
-        win.style.left = '';
-        win.style.top = '';
-        win.style.width = '';
-        win.style.height = '';
+        win.style.left = ''; win.style.top = ''; win.style.width = ''; win.style.height = '';
       }
       bringToFront(win);
     }
 
     function attachWindowControls(win) {
-      const minBtn = win.querySelector('.tb-btn.min-btn');
-      const maxBtn = win.querySelector('.tb-btn.max-btn');
-      if (minBtn) {
-        minBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          minimizeWindow(win);
-        });
-        minBtn.addEventListener('mousedown', (e) => e.stopPropagation());
-      }
-      if (maxBtn) {
-        maxBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggleMaximize(win);
-        });
-        maxBtn.addEventListener('mousedown', (e) => e.stopPropagation());
-      }
-      // Double-click titlebar to toggle maximize
-      const titlebar = win.querySelector('.titlebar');
-      if (titlebar) {
-        titlebar.addEventListener('dblclick', (e) => {
-          if (e.target.closest('.titlebar-buttons')) return;
-          toggleMaximize(win);
-        });
-      }
+      var minBtn = win.querySelector('.tb-btn.min-btn'), maxBtn = win.querySelector('.tb-btn.max-btn');
+      if (minBtn) { minBtn.addEventListener('click', function(e) { e.stopPropagation(); minimizeWindow(win); }); minBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); }); }
+      if (maxBtn) { maxBtn.addEventListener('click', function(e) { e.stopPropagation(); toggleMaximize(win); }); maxBtn.addEventListener('mousedown', function(e) { e.stopPropagation(); }); }
+      var tb = win.querySelector('.titlebar');
+      if (tb) tb.addEventListener('dblclick', function(e) { if (e.target.closest('.titlebar-buttons')) return; toggleMaximize(win); });
     }
 
     function attachClose(win, options) {
-      const closeBtn = win.querySelector('.tb-btn.close-btn');
+      var closeBtn = win.querySelector('.tb-btn.close-btn');
       if (!closeBtn) return;
-      closeBtn.addEventListener('click', (e) => {
+      closeBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         if (win._dockItem) { win._dockItem.remove(); win._dockItem = null; }
-        if (options && options.removeOnClose) {
-          win.remove();
-        } else {
-          win.style.display = 'none';
-        }
+        if (options && options.removeOnClose) { win.remove(); } else { win.style.display = 'none'; }
       });
     }
 
-    function spawnSiteWindow(title, url) {
-      const win = document.createElement('div');
+    function spinEl(el) {
+      if (!el) return;
+      el.classList.remove('spinning'); void el.offsetWidth; el.classList.add('spinning');
+      el.addEventListener('animationend', function() { el.classList.remove('spinning'); }, { once: true });
+    }
+
+    function attachGlobe(win) {
+      var globe = win.querySelector('.globe');
+      if (globe) globe.addEventListener('click', function() { spinEl(globe); });
+    }
+
+    function navigateMainWindow(mainWin, idx) {
+      idx = Math.max(0, Math.min(idx, MAIN_PAGES.length - 1));
+      mainWin._histIdx = idx;
+      var page = MAIN_PAGES[idx];
+      var rows = mainWin.querySelectorAll('.url-row');
+      var urlTitleEl = rows[0] ? rows[0].querySelector('.url-input') : null;
+      var urlAddrEl  = rows[1] ? rows[1].querySelector('.url-input') : null;
+      var status  = mainWin.querySelector('.statusbar span:first-child');
+      var backBtn = mainWin.querySelector('.tool.back-btn');
+      var fwdBtn  = mainWin.querySelector('.tool.fwd-btn');
+      if (backBtn) backBtn.classList.toggle('nav-disabled', idx <= 0);
+      if (fwdBtn)  fwdBtn.classList.toggle('nav-disabled',  idx >= MAIN_PAGES.length - 1);
+
+      if (page.type === 'doc') {
+        var existing = mainWin.querySelector('.iframe-doc.main-nav');
+        if (existing) existing.remove();
+        var doc = mainWin.querySelector('.document');
+        if (doc) { doc.style.display = ''; doc.scrollTop = 0; }
+        if (urlTitleEl) urlTitleEl.textContent = page.docTitle;
+        if (urlAddrEl)  urlAddrEl.textContent  = page.url;
+        if (status) status.textContent = 'Document: Done.';
+      } else {
+        var doc2 = mainWin.querySelector('.document');
+        if (doc2) doc2.style.display = 'none';
+        var iframeDoc = mainWin.querySelector('.iframe-doc.main-nav');
+        if (!iframeDoc) {
+          iframeDoc = document.createElement('div');
+          iframeDoc.className = 'iframe-doc main-nav';
+          iframeDoc.innerHTML = '<iframe sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe><div class="iframe-fallback" style="display:none">this site does not allow embedding.<br/><a target="_blank" rel="noopener">open in a new tab</a></div>';
+          mainWin.querySelector('.statusbar').before(iframeDoc);
+        }
+        var iframe2 = iframeDoc.querySelector('iframe');
+        var fallback2 = iframeDoc.querySelector('.iframe-fallback');
+        var fl = fallback2.querySelector('a');
+        fallback2.style.display = 'none';
+        iframe2.src = page.url;
+        if (fl) { fl.href = page.url; fl.textContent = 'open ' + page.title + ' in a new tab'; }
+        iframeDoc.style.display = '';
+        if (urlTitleEl) urlTitleEl.textContent = page.docTitle;
+        if (urlAddrEl)  urlAddrEl.textContent  = page.url;
+        if (status) status.textContent = 'Connecting to ' + page.title + '...';
+        var loaded2 = false;
+        iframe2.onload = function() { loaded2 = true; if (status) status.textContent = 'Document: Done.'; };
+        setTimeout(function() { if (!loaded2) { fallback2.style.display = 'flex'; if (status) status.textContent = 'Embedding blocked by site.'; } }, 4000);
+      }
+    }
+
+    function attachMainNav(mainWin) {
+      mainWin._histIdx = 0;
+      var backBtn    = mainWin.querySelector('.tool.back-btn');
+      var fwdBtn     = mainWin.querySelector('.tool.fwd-btn');
+      var refreshBtn = mainWin.querySelector('.tool.refresh-btn');
+      if (backBtn) { backBtn.classList.add('nav-disabled'); backBtn.addEventListener('click', function() { if (!backBtn.classList.contains('nav-disabled')) navigateMainWindow(mainWin, (mainWin._histIdx || 0) - 1); }); }
+      if (fwdBtn)  { fwdBtn.addEventListener('click', function() { if (!fwdBtn.classList.contains('nav-disabled')) navigateMainWindow(mainWin, (mainWin._histIdx || 0) + 1); }); }
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+          spinEl(refreshBtn);
+          var page = MAIN_PAGES[mainWin._histIdx || 0];
+          if (page.type === 'doc') {
+            var doc = mainWin.querySelector('.document');
+            if (doc) { doc.style.transition = 'opacity 0.12s'; doc.style.opacity = '0.35'; setTimeout(function() { doc.style.opacity = '1'; setTimeout(function() { doc.style.transition = ''; }, 150); }, 200); doc.scrollTop = 0; }
+          } else {
+            var ifr = mainWin.querySelector('.iframe-doc.main-nav iframe');
+            if (ifr) { var s = ifr.src; ifr.src = ''; ifr.src = s; }
+          }
+        });
+      }
+    }
+
+    function attachSubNav(win) {
+      var backBtn    = win.querySelector('.tool.back-btn');
+      var fwdBtn     = win.querySelector('.tool.fwd-btn');
+      var refreshBtn = win.querySelector('.tool.refresh-btn');
+      var iframe     = win.querySelector('iframe');
+      if (backBtn)    backBtn.addEventListener('click',    function() { try { iframe.contentWindow.history.back();    } catch(e) {} });
+      if (fwdBtn)     fwdBtn.addEventListener('click',     function() { try { iframe.contentWindow.history.forward(); } catch(e) {} });
+      if (refreshBtn) refreshBtn.addEventListener('click', function() { spinEl(refreshBtn); try { var s = iframe.src; iframe.src = ''; iframe.src = s; } catch(e) {} });
+    }
+
+    function spawnSiteWindow(title, url, opts) {
+      opts = opts || {};
+      var win = document.createElement('div');
       win.className = 'browser sub-browser dragged';
       win.setAttribute('role', 'region');
       win.setAttribute('aria-label', title);
-      win.innerHTML = `
-        <div class="titlebar">
-          <div class="titlebar-left">
-            <span class="titlebar-icon" aria-hidden="true"></span>
-            <span>${title}</span>
-          </div>
-          <div class="titlebar-buttons">
-            <span class="tb-btn min-btn" title="Minimize">_</span>
-            <span class="tb-btn max-btn" title="Maximize">▢</span>
-            <span class="tb-btn close-btn" title="Close">×</span>
-          </div>
-        </div>
-        <div class="menubar">
-          <span><u>F</u>ile</span>
-          <span><u>E</u>dit</span>
-          <span><u>O</u>ptions</span>
-          <span><u>N</u>avigate</span>
-          <span><u>H</u>otlist</span>
-          <span><u>A</u>nnotate</span>
-          <span><u>H</u>elp</span>
-        </div>
-        <div class="toolbar">
-          <span class="tool">◀</span>
-          <span class="tool">▶</span>
-          <span class="tool">⟳</span>
-          <span class="tool">⌂</span>
-          <span class="tool">◉</span>
-          <span class="tool">★</span>
-          <span class="tool">⎙</span>
-          <span class="tool">?</span>
-        </div>
-        <div class="url-bar">
-          <div class="url-row">
-            <span class="url-label">Document Title:</span>
-            <span class="url-input">${title}</span>
-            <div class="globe" aria-hidden="true"></div>
-          </div>
-          <div class="url-row">
-            <span class="url-label">Document URL:</span>
-            <span class="url-input">${url}</span>
-          </div>
-        </div>
-        <div class="iframe-doc">
-          <iframe src="${url}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
-          <div class="iframe-fallback">
-            this site doesn't allow embedding.<br/>
-            <a href="${url}" target="_blank" rel="noopener">open ${title} in a new tab</a>
-          </div>
-        </div>
-        <div class="statusbar">
-          <span>Connecting to ${title}...</span>
-          <span class="num">NUM</span>
-        </div>
-        <span class="resize-handle" aria-hidden="true"></span>
-      `;
-
-      // Stagger initial position so stacked windows aren't perfectly overlapping
+      if (opts.dockLabel) win._dockLabel = opts.dockLabel;
+      win.innerHTML = '<div class="titlebar"><div class="titlebar-left"><span class="titlebar-icon" aria-hidden="true"></span><span>' + title + '</span></div><div class="titlebar-buttons"><span class="tb-btn min-btn" title="Minimize">_</span><span class="tb-btn max-btn" title="Maximize">&#9634;</span><span class="tb-btn close-btn" title="Close">&#215;</span></div></div><div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>O</u>ptions</span><span><u>N</u>avigate</span><span><u>H</u>otlist</span><span><u>A</u>nnotate</span><span><u>H</u>elp</span></div><div class="toolbar"><span class="tool back-btn" title="Back">&#9664;</span><span class="tool fwd-btn" title="Forward">&#9654;</span><span class="tool refresh-btn" title="Refresh">&#10227;</span><span class="tool">&#8962;</span><span class="tool">&#9673;</span><span class="tool">&#9733;</span><span class="tool">&#9113;</span><span class="tool">?</span></div><div class="url-bar"><div class="url-row"><span class="url-label">Document Title:</span><span class="url-input">' + title + '</span><div class="globe"></div></div><div class="url-row"><span class="url-label">Document URL:</span><span class="url-input">' + url + '</span></div></div><div class="iframe-doc"><iframe src="' + url + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe><div class="iframe-fallback">this site doesn't allow embedding.<br/><a href="' + url + '" target="_blank" rel="noopener">open ' + title + ' in a new tab</a></div></div><div class="statusbar"><span>Connecting to ' + title + '...</span><span class="num">NUM</span></div><span class="resize-handle" aria-hidden="true"></span>';
       spawnOffset = (spawnOffset + 28) % 140;
-      const baseLeft = Math.max(40, (window.innerWidth - 820) / 2 + spawnOffset);
-      const baseTop = Math.max(20, (window.innerHeight - 620) / 2 + spawnOffset);
-      win.style.left = baseLeft + 'px';
-      win.style.top = baseTop + 'px';
-
+      win.style.left = Math.max(40, (window.innerWidth - 820) / 2 + spawnOffset) + 'px';
+      win.style.top  = Math.max(20, (window.innerHeight - 620) / 2 + spawnOffset) + 'px';
       document.body.appendChild(win);
       bringToFront(win);
-      attachDrag(win);
-      attachResize(win);
-      attachWindowControls(win);
+      attachDrag(win); attachResize(win); attachWindowControls(win);
       attachClose(win, { removeOnClose: true });
-
-      const iframe = win.querySelector('iframe');
-      const fallback = win.querySelector('.iframe-fallback');
-      const status = win.querySelector('.statusbar span');
-
-      let loaded = false;
-      iframe.addEventListener('load', () => {
-        loaded = true;
-        if (status) status.textContent = 'Document: Done.';
-      });
-      // If the embed never loads (X-Frame-Options/CSP), show fallback.
-      setTimeout(() => {
-        if (!loaded) {
-          fallback.style.display = 'flex';
-          if (status) status.textContent = 'Embedding blocked by site.';
-        }
-      }, 4000);
+      attachSubNav(win); attachGlobe(win);
+      var iframe = win.querySelector('iframe');
+      var fallback = win.querySelector('.iframe-fallback');
+      var status = win.querySelector('.statusbar span');
+      var loaded = false;
+      iframe.addEventListener('load', function() { loaded = true; if (status) status.textContent = 'Document: Done.'; });
+      setTimeout(function() { if (!loaded) { fallback.style.display = 'flex'; if (status) status.textContent = 'Embedding blocked by site.'; } }, 4000);
     }
 
     function spawnFormWindow(title) {
-      const win = document.createElement('div');
+      var win = document.createElement('div');
       win.className = 'browser sub-browser form-browser dragged';
       win.setAttribute('role', 'region');
       win.setAttribute('aria-label', title);
-      win.innerHTML = `
-        <div class="titlebar">
-          <div class="titlebar-left">
-            <span class="titlebar-icon" aria-hidden="true"></span>
-            <span>${title}</span>
-          </div>
-          <div class="titlebar-buttons">
-            <span class="tb-btn min-btn" title="Minimize">_</span>
-            <span class="tb-btn max-btn" title="Maximize">▢</span>
-            <span class="tb-btn close-btn" title="Close">×</span>
-          </div>
-        </div>
-        <div class="menubar">
-          <span><u>F</u>ile</span>
-          <span><u>E</u>dit</span>
-          <span><u>O</u>ptions</span>
-          <span><u>N</u>avigate</span>
-          <span><u>H</u>elp</span>
-        </div>
-        <div class="url-bar">
-          <div class="url-row">
-            <span class="url-label">Document Title:</span>
-            <span class="url-input">${title}</span>
-            <div class="globe" aria-hidden="true"></div>
-          </div>
-          <div class="url-row">
-            <span class="url-label">Document URL:</span>
-            <span class="url-input">http://www.eidos.computer/follow.html</span>
-          </div>
-        </div>
-        <div class="form-doc">
-          <div class="form-state">
-            <h2>Follow our updates.</h2>
-            <p class="intro">We'll send a note when there's something worth your inbox. No spam. No ai slop.</p>
-            <form class="subscribe-form" novalidate>
-              <label for="sub-name">Name <span style="opacity:.5">(optional)</span></label>
-              <input id="sub-name" name="name" type="text" autocomplete="given-name" />
-              <label for="sub-email">Email</label>
-              <input id="sub-email" name="email" type="email" autocomplete="email" required placeholder="you@domain.com" />
-              <div class="form-actions">
-                <button type="submit" class="submit-btn">Subscribe</button>
-              </div>
-              <div class="form-note">By subscribing you agree to receive occasional emails about eidos. Unsubscribe anytime.</div>
-            </form>
-          </div>
-          <div class="success-state">
-            <p>Thanks for following along — Fritz &amp; Yongkang.</p>
-          </div>
-        </div>
-        <div class="statusbar">
-          <span>Form: ready.</span>
-          <span class="num">NUM</span>
-        </div>
-      `;
-
+      win.innerHTML = '<div class="titlebar"><div class="titlebar-left"><span class="titlebar-icon" aria-hidden="true"></span><span>' + title + '</span></div><div class="titlebar-buttons"><span class="tb-btn min-btn" title="Minimize">_</span><span class="tb-btn max-btn" title="Maximize">&#9634;</span><span class="tb-btn close-btn" title="Close">&#215;</span></div></div><div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>O</u>ptions</span><span><u>N</u>avigate</span><span><u>H</u>elp</span></div><div class="url-bar"><div class="url-row"><span class="url-label">Document Title:</span><span class="url-input">' + title + '</span><div class="globe"></div></div><div class="url-row"><span class="url-label">Document URL:</span><span class="url-input">http://www.eidos.computer/follow.html</span></div></div><div class="form-doc"><div class="form-state"><h2>Follow our updates.</h2><p class="intro">We'll send a note when there's something worth your inbox. No spam. No ai slop.</p><form class="subscribe-form" novalidate><label for="sub-name">Name <span style="opacity:.5">(optional)</span></label><input id="sub-name" name="name" type="text" autocomplete="given-name" /><label for="sub-email">Email</label><input id="sub-email" name="email" type="email" autocomplete="email" required placeholder="you@domain.com" /><div class="form-actions"><button type="submit" class="submit-btn">Subscribe</button></div><div class="form-note">By subscribing you agree to receive occasional emails about eidos. Unsubscribe anytime.</div></form></div><div class="success-state"><p>Thanks for following along — Fritz &amp; Yongkang.</p></div></div><div class="statusbar"><span>Form: ready.</span><span class="num">NUM</span></div>';
       spawnOffset = (spawnOffset + 28) % 140;
-      const baseLeft = Math.max(40, (window.innerWidth - 440) / 2 + spawnOffset);
-      const baseTop = Math.max(20, (window.innerHeight - 380) / 2 + spawnOffset);
-      win.style.left = baseLeft + 'px';
-      win.style.top = baseTop + 'px';
+      win.style.left  = Math.max(40, (window.innerWidth - 440) / 2 + spawnOffset) + 'px';
+      win.style.top   = Math.max(20, (window.innerHeight - 380) / 2 + spawnOffset) + 'px';
       win.style.width = Math.min(440, window.innerWidth - 40) + 'px';
-
       document.body.appendChild(win);
-      bringToFront(win);
-      attachDrag(win);
-      attachWindowControls(win);
-      attachClose(win, { removeOnClose: true });
-
-      const form = win.querySelector('.subscribe-form');
-      const formState = win.querySelector('.form-state');
-      const successState = win.querySelector('.success-state');
-      const status = win.querySelector('.statusbar span');
-      const emailInput = win.querySelector('#sub-email');
-
-      form.addEventListener('submit', async (e) => {
+      bringToFront(win); attachDrag(win); attachWindowControls(win);
+      attachClose(win, { removeOnClose: true }); attachGlobe(win);
+      var form = win.querySelector('.subscribe-form');
+      var formState = win.querySelector('.form-state');
+      var successState = win.querySelector('.success-state');
+      var status = win.querySelector('.statusbar span');
+      var emailInput = win.querySelector('#sub-email');
+      form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const email = (emailInput.value || '').trim();
-        const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        if (!valid) {
-          if (status) status.textContent = 'Form: enter a valid email.';
-          emailInput.focus();
-          return;
-        }
-        const submitBtn = win.querySelector('.submit-btn');
+        var email = (emailInput.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { if (status) status.textContent = 'Form: enter a valid email.'; emailInput.focus(); return; }
+        var submitBtn = win.querySelector('.submit-btn');
         if (submitBtn) submitBtn.disabled = true;
         if (status) status.textContent = 'Form: submitting...';
-        const nameVal = (win.querySelector('#sub-name').value || '').trim() || null;
+        var nameVal = (win.querySelector('#sub-name').value || '').trim() || null;
         try {
-          const res = await fetch('https://wwfcgiekddkllvsksknr.supabase.co/rest/v1/subscribers', {
-            method: 'POST',
-            headers: {
-              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZmNnaWVrZGRrbGx2c2tza25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDQyMjAsImV4cCI6MjA5NTcyMDIyMH0.e9t-8ipFAzW8MUhpAxJa112acR6D-XfgENlBmUz3_YY',
-              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZmNnaWVrZGRrbGx2c2tza25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDQyMjAsImV4cCI6MjA5NTcyMDIyMH0.e9t-8ipFAzW8MUhpAxJa112acR6D-XfgENlBmUz3_YY',
-              'Content-Type': 'application/json',
-              'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({ email, name: nameVal })
-          });
-          if (res.ok || res.status === 409) {
-            formState.style.display = 'none';
-            successState.classList.add('shown');
-            if (status) status.textContent = 'Form: submitted.';
-          } else {
-            throw new Error(res.status);
-          }
-        } catch (_) {
-          if (status) status.textContent = 'Form: error — please try again.';
-          if (submitBtn) submitBtn.disabled = false;
-        }
+          var res = await fetch('https://wwfcgiekddkllvsksknr.supabase.co/rest/v1/subscribers', { method: 'POST', headers: { 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZmNnaWVrZGRrbGx2c2tza25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDQyMjAsImV4cCI6MjA5NTcyMDIyMH0.e9t-8ipFAzW8MUhpAxJa112acR6D-XfgENlBmUz3_YY', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZmNnaWVrZGRrbGx2c2tza25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDQyMjAsImV4cCI6MjA5NTcyMDIyMH0.e9t-8ipFAzW8MUhpAxJa112acR6D-XfgENlBmUz3_YY', 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, body: JSON.stringify({ email: email, name: nameVal }) });
+          if (res.ok || res.status === 409) { formState.style.display = 'none'; successState.classList.add('shown'); if (status) status.textContent = 'Form: submitted.'; }
+          else throw new Error(res.status);
+        } catch(_) { if (status) status.textContent = 'Form: error — please try again.'; if (submitBtn) submitBtn.disabled = false; }
       });
     }
 
-    // Wire up the existing main browser
-    document.querySelectorAll('.browser').forEach((win) => {
-      attachDrag(win);
-      attachResize(win);
-      attachWindowControls(win);
-    });
+    // Boot
+    var mainBrowser = document.querySelector('.browser');
+    if (mainBrowser) {
+      attachDrag(mainBrowser); attachResize(mainBrowser); attachWindowControls(mainBrowser);
+      attachMainNav(mainBrowser); attachGlobe(mainBrowser);
+    }
 
-    // Wire up personal-site links
-    document.querySelectorAll('.open-window').forEach((link) => {
-      link.addEventListener('click', (e) => {
+    document.querySelectorAll('.open-window').forEach(function(link) {
+      link.addEventListener('click', function(e) {
         e.preventDefault();
-        const title = link.dataset.title || link.textContent.trim();
-        const url = link.dataset.url || link.href;
-        spawnSiteWindow(title, url);
+        spawnSiteWindow(link.dataset.title || link.textContent.trim(), link.dataset.url || link.href, { dockLabel: link.dataset.dock || null });
       });
     });
 
-    // Wire up the "Here" subscribe link
-    document.querySelectorAll('.open-form').forEach((link) => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const title = link.dataset.title || 'follow eidos';
-        spawnFormWindow(title);
-      });
+    document.querySelectorAll('.open-form').forEach(function(link) {
+      link.addEventListener('click', function(e) { e.preventDefault(); spawnFormWindow(link.dataset.title || 'follow eidos'); });
     });
   })();
 </script>
