@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>eidos</title>
+<title>eidos.</title>
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="apple-touch-icon" href="favicon.png" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -67,9 +67,9 @@
     left: 28px;
     z-index: 5;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 22px;
-    font-style: italic;
-    letter-spacing: -0.5px;
+    font-size: 15px;
+    font-style: normal;
+    letter-spacing: 0;
     color: var(--ink);
   }
 
@@ -324,10 +324,10 @@
     background: #F4F1E8;
     overflow-y: scroll;
     overflow-x: hidden;
-    padding: 28px 36px 40px;
+    padding: 20px 26px 30px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 12px;
+    line-height: 1.5;
     color: var(--ink);
     border: 1px solid var(--chrome-darker);
     box-shadow: inset 1px 1px 0 var(--chrome-dark);
@@ -366,8 +366,8 @@
 
   .doc-banner .logo {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 56px;
-    letter-spacing: 4px;
+    font-size: 38px;
+    letter-spacing: 3px;
     font-weight: 500;
     color: #1a1a1a;
     line-height: 1;
@@ -375,16 +375,16 @@
 
   .doc-banner .tagline {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 4px;
-    margin-top: 6px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    margin-top: 5px;
     color: #555;
     text-transform: uppercase;
   }
 
   h1.doc-title {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 28px;
+    font-size: 18px;
     font-weight: 700;
     margin-bottom: 4px;
     color: var(--ink);
@@ -777,19 +777,19 @@
 
   @media (max-width: 700px) {
     .browser { height: calc(100vh - 60px); }
-    .document { padding: 20px 18px 28px; font-size: 14px; }
-    .doc-banner .logo { font-size: 40px; letter-spacing: 4px; }
-    h1.doc-title { font-size: 22px; }
+    .document { padding: 14px 14px 20px; font-size: 11px; }
+    .doc-banner .logo { font-size: 28px; letter-spacing: 3px; }
+    h1.doc-title { font-size: 16px; }
     .menubar { gap: 8px; font-size: 11px; }
     .url-label { width: 90px; }
-    .sitemark { font-size: 18px; }
+    .sitemark { font-size: 13px; }
     .credits { font-size: 9px; }
   }
 </style>
 </head>
 <body>
 
-  <div class="sitemark">eidos</div>
+  <div class="sitemark">eidos.</div>
   <div class="meta">est. 2026 — berlin / paris</div>
 
   <div class="browser" role="region" aria-label="eidos document viewer">
@@ -829,7 +829,7 @@
     <div class="url-bar">
       <div class="url-row">
         <span class="url-label">Document Title:</span>
-        <span class="url-input">The browser we needed.</span>
+        <span class="url-input">The last browser for knowledge workers.</span>
         <div class="globe" aria-hidden="true"></div>
       </div>
       <div class="url-row">
@@ -841,18 +841,16 @@
     <div class="document" id="doc">
 
       <div class="doc-banner">
-        <div class="logo">eidos</div>
-        <div class="tagline">THE BROWSER WE NEEDED</div>
+        <div class="logo">eidos.</div>
+        <div class="tagline">THE LAST BROWSER FOR KNOWLEDGE WORKERS</div>
       </div>
 
-      <h1 class="doc-title">The browser we needed.</h1>
+      <h1 class="doc-title">The last browser for knowledge workers.</h1>
       <div class="doc-meta-line">May '26 - fritz &amp; yongkang</div>
 
-      <p>We've been inside browsers our whole lives. Fritz power-usered Notion since grade 10 and owned growth projects at Enpal at 18. Yongkang won 11 hackathons in a year and was founding engineer at MozartAI and EpiMinds. We know what it means to build with computers — and to live in them.</p>
+      <p>Ivan Zhao has to be the founder we look up to the most right now. We love the way he cares about each fucking pixel. We love that he has his own philosophy and sticks to it. We love the fact that he'll only do podcasts if he directs them. We love that his office bathrooms look like those at designer hotels. We love the culture he has built at Notion. We love his taste.</p>
 
-      <p>The browser is our OS. Knowledge workers spend their whole day in one. And right now it has little personality, little memory, little taste. It waits for a prompt. It forgets everything when you close the tab. It looks identical on three billion machines.</p>
-
-      <p>We think it has more potential. Especially now. So we're building it.</p>
+      <p>So what if he (with a little bit of our own 2 cents) built a browser? How would it look?</p>
 
       <hr class="doc-rule" />
 
