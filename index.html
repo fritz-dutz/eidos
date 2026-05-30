@@ -1143,7 +1143,53 @@
       win.setAttribute('role', 'region');
       win.setAttribute('aria-label', title);
       if (opts.dockLabel) win._dockLabel = opts.dockLabel;
-      win.innerHTML = '<div class="titlebar"><div class="titlebar-left"><span class="titlebar-icon" aria-hidden="true"></span><span>' + title + '</span></div><div class="titlebar-buttons"><span class="tb-btn min-btn" title="Minimize">_</span><span class="tb-btn max-btn" title="Maximize">&#9634;</span><span class="tb-btn close-btn" title="Close">&#215;</span></div></div><div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>O</u>ptions</span><span><u>N</u>avigate</span><span><u>H</u>otlist</span><span><u>A</u>nnotate</span><span><u>H</u>elp</span></div><div class="toolbar"><span class="tool back-btn" title="Back">&#9664;</span><span class="tool fwd-btn" title="Forward">&#9654;</span><span class="tool refresh-btn" title="Refresh">&#10227;</span><span class="tool">&#8962;</span><span class="tool">&#9673;</span><span class="tool">&#9733;</span><span class="tool">&#9113;</span><span class="tool">?</span></div><div class="url-bar"><div class="url-row"><span class="url-label">Document Title:</span><span class="url-input">' + title + '</span><div class="globe"></div></div><div class="url-row"><span class="url-label">Document URL:</span><span class="url-input">' + url + '</span></div></div><div class="iframe-doc"><iframe src="' + url + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe><div class="iframe-fallback">this site doesn't allow embedding.<br/><a href="' + url + '" target="_blank" rel="noopener">open ' + title + ' in a new tab</a></div></div><div class="statusbar"><span>Connecting to ' + title + '...</span><span class="num">NUM</span></div><span class="resize-handle" aria-hidden="true"></span>';
+      win.innerHTML = `
+        <div class="titlebar">
+          <div class="titlebar-left">
+            <span class="titlebar-icon" aria-hidden="true"></span>
+            <span>${title}</span>
+          </div>
+          <div class="titlebar-buttons">
+            <span class="tb-btn min-btn" title="Minimize">_</span>
+            <span class="tb-btn max-btn" title="Maximize">&#9634;</span>
+            <span class="tb-btn close-btn" title="Close">&#215;</span>
+          </div>
+        </div>
+        <div class="menubar">
+          <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>O</u>ptions</span>
+          <span><u>N</u>avigate</span><span><u>H</u>otlist</span><span><u>A</u>nnotate</span><span><u>H</u>elp</span>
+        </div>
+        <div class="toolbar">
+          <span class="tool back-btn" title="Back">&#9664;</span>
+          <span class="tool fwd-btn" title="Forward">&#9654;</span>
+          <span class="tool refresh-btn" title="Refresh">&#10227;</span>
+          <span class="tool">&#8962;</span><span class="tool">&#9673;</span>
+          <span class="tool">&#9733;</span><span class="tool">&#9113;</span><span class="tool">?</span>
+        </div>
+        <div class="url-bar">
+          <div class="url-row">
+            <span class="url-label">Document Title:</span>
+            <span class="url-input">${title}</span>
+            <div class="globe"></div>
+          </div>
+          <div class="url-row">
+            <span class="url-label">Document URL:</span>
+            <span class="url-input">${url}</span>
+          </div>
+        </div>
+        <div class="iframe-doc">
+          <iframe src="${url}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
+          <div class="iframe-fallback">
+            This site does not allow embedding.<br/>
+            <a href="${url}" target="_blank" rel="noopener">Open ${title} in a new tab &rarr;</a>
+          </div>
+        </div>
+        <div class="statusbar">
+          <span>Connecting to ${title}...</span>
+          <span class="num">NUM</span>
+        </div>
+        <span class="resize-handle" aria-hidden="true"></span>
+      `;
       spawnOffset = (spawnOffset + 28) % 140;
       win.style.left = Math.max(40, (window.innerWidth - 820) / 2 + spawnOffset) + 'px';
       win.style.top  = Math.max(20, (window.innerHeight - 620) / 2 + spawnOffset) + 'px';
@@ -1165,7 +1211,57 @@
       win.className = 'browser sub-browser form-browser dragged';
       win.setAttribute('role', 'region');
       win.setAttribute('aria-label', title);
-      win.innerHTML = '<div class="titlebar"><div class="titlebar-left"><span class="titlebar-icon" aria-hidden="true"></span><span>' + title + '</span></div><div class="titlebar-buttons"><span class="tb-btn min-btn" title="Minimize">_</span><span class="tb-btn max-btn" title="Maximize">&#9634;</span><span class="tb-btn close-btn" title="Close">&#215;</span></div></div><div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>O</u>ptions</span><span><u>N</u>avigate</span><span><u>H</u>elp</span></div><div class="url-bar"><div class="url-row"><span class="url-label">Document Title:</span><span class="url-input">' + title + '</span><div class="globe"></div></div><div class="url-row"><span class="url-label">Document URL:</span><span class="url-input">http://www.eidos.computer/follow.html</span></div></div><div class="form-doc"><div class="form-state"><h2>Follow our updates.</h2><p class="intro">We'll send a note when there's something worth your inbox. No spam. No ai slop.</p><form class="subscribe-form" novalidate><label for="sub-name">Name <span style="opacity:.5">(optional)</span></label><input id="sub-name" name="name" type="text" autocomplete="given-name" /><label for="sub-email">Email</label><input id="sub-email" name="email" type="email" autocomplete="email" required placeholder="you@domain.com" /><div class="form-actions"><button type="submit" class="submit-btn">Subscribe</button></div><div class="form-note">By subscribing you agree to receive occasional emails about eidos. Unsubscribe anytime.</div></form></div><div class="success-state"><p>Thanks for following along — Fritz &amp; Yongkang.</p></div></div><div class="statusbar"><span>Form: ready.</span><span class="num">NUM</span></div>';
+      win.innerHTML = `
+        <div class="titlebar">
+          <div class="titlebar-left">
+            <span class="titlebar-icon" aria-hidden="true"></span>
+            <span>${title}</span>
+          </div>
+          <div class="titlebar-buttons">
+            <span class="tb-btn min-btn" title="Minimize">_</span>
+            <span class="tb-btn max-btn" title="Maximize">&#9634;</span>
+            <span class="tb-btn close-btn" title="Close">&#215;</span>
+          </div>
+        </div>
+        <div class="menubar">
+          <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>O</u>ptions</span>
+          <span><u>N</u>avigate</span><span><u>H</u>elp</span>
+        </div>
+        <div class="url-bar">
+          <div class="url-row">
+            <span class="url-label">Document Title:</span>
+            <span class="url-input">${title}</span>
+            <div class="globe"></div>
+          </div>
+          <div class="url-row">
+            <span class="url-label">Document URL:</span>
+            <span class="url-input">http://www.eidos.computer/follow.html</span>
+          </div>
+        </div>
+        <div class="form-doc">
+          <div class="form-state">
+            <h2>Follow our updates.</h2>
+            <p class="intro">We will send a note when there is something worth your inbox. No spam.</p>
+            <form class="subscribe-form" novalidate>
+              <label for="sub-name">Name <span style="opacity:.5">(optional)</span></label>
+              <input id="sub-name" name="name" type="text" autocomplete="given-name" />
+              <label for="sub-email">Email</label>
+              <input id="sub-email" name="email" type="email" autocomplete="email" required placeholder="you@domain.com" />
+              <div class="form-actions">
+                <button type="submit" class="submit-btn">Subscribe</button>
+              </div>
+              <div class="form-note">Occasional emails about eidos. Unsubscribe anytime.</div>
+            </form>
+          </div>
+          <div class="success-state">
+            <p>Thanks for following along &#8212; Fritz &amp; Yongkang.</p>
+          </div>
+        </div>
+        <div class="statusbar">
+          <span>Form: ready.</span>
+          <span class="num">NUM</span>
+        </div>
+      `;
       spawnOffset = (spawnOffset + 28) % 140;
       win.style.left  = Math.max(40, (window.innerWidth - 440) / 2 + spawnOffset) + 'px';
       win.style.top   = Math.max(20, (window.innerHeight - 380) / 2 + spawnOffset) + 'px';
