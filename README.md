@@ -2,7 +2,7 @@
 
 > The last browser for knowledge workers.
 
-A manifesto on what a browser could be if it had personality, memory, and taste — written by Fritz and Yongkang, May 2026.
+A manifesto on how a browser should be like - written by Fritz and Yongkang, May 2026.
 
 ---
 
@@ -10,7 +10,7 @@ A manifesto on what a browser could be if it had personality, memory, and taste 
 
 Knowledge workers spend their whole day in a browser. It is basically our OS. And right now it has little personality, little memory, little taste.
 
-eidos is our answer to that. Not another AI browser that automates tasks for you — but one that thinks *with* you. Intent-aware, not prompt-driven. A browser that reads your attention, learns your workflows, and compounds over time.
+Not another AI browser that automates tasks for you — but one that thinks *with* you. Intent-aware, not prompt-driven. A browser that reads your attention, learns your workflows, and compounds over time.
 
 The six things we are building toward:
 
