@@ -6,19 +6,19 @@
 <title>eidos</title>
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="apple-touch-icon" href="favicon.png" />
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Times+New+Roman&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --paper: #EFEAE0;
     --paper-deep: #E5DFD2;
     --ink: #1a1a1a;
-    --link: #0000ee;
-    --visited: #551A8B;
+    --link: #775722;
+    --visited: #5C4218;
     --chrome: #C0C0C0;
     --chrome-light: #DFDFDF;
     --chrome-dark: #808080;
     --chrome-darker: #404040;
-    --titlebar: #00007F;
+    --titlebar: #6B4F1A;
     --titlebar-text: #FFFFFF;
   }
 
@@ -66,7 +66,7 @@
     top: 24px;
     left: 28px;
     z-index: 5;
-    font-family: 'Times New Roman', serif;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 22px;
     font-style: italic;
     letter-spacing: -0.5px;
@@ -117,7 +117,7 @@
       18px 18px 40px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .browser.dragged {
@@ -150,7 +150,7 @@
   }
 
   .titlebar {
-    background: linear-gradient(to bottom, #0000A0, var(--titlebar));
+    background: linear-gradient(to bottom, #8B6726, var(--titlebar));
     color: var(--titlebar-text);
     padding: 3px 4px;
     display: flex;
@@ -301,7 +301,7 @@
   .globe {
     width: 36px;
     height: 36px;
-    background: radial-gradient(circle at 30% 30%, #6699cc, #003366);
+    background: radial-gradient(circle at 30% 30%, #A07835, #5C3D12);
     border-radius: 50%;
     margin-left: 8px;
     flex-shrink: 0;
@@ -315,7 +315,7 @@
     position: absolute;
     inset: 4px;
     border-radius: 50%;
-    background: repeating-linear-gradient(0deg, transparent 0, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 5px);
+    background: repeating-linear-gradient(0deg, transparent 0, transparent 4px, rgba(255,255,255,0.12) 4px, rgba(255,255,255,0.12) 5px);
   }
 
   /* Scrollable document */
@@ -325,7 +325,7 @@
     overflow-y: scroll;
     overflow-x: hidden;
     padding: 28px 36px 40px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 15px;
     line-height: 1.55;
     color: var(--ink);
@@ -365,10 +365,10 @@
   }
 
   .doc-banner .logo {
-    font-family: 'Times New Roman', serif;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 56px;
-    letter-spacing: 6px;
-    font-weight: 400;
+    letter-spacing: 4px;
+    font-weight: 500;
     color: #1a1a1a;
     line-height: 1;
   }
@@ -383,7 +383,7 @@
   }
 
   h1.doc-title {
-    font-family: 'Times New Roman', serif;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 4px;
@@ -677,12 +677,12 @@
     border: 1px solid var(--chrome-darker);
     box-shadow: inset 1px 1px 0 var(--chrome-dark);
     padding: 26px 28px 28px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'IBM Plex Mono', monospace;
     color: var(--ink);
   }
 
   .form-doc h2 {
-    font-family: 'Times New Roman', serif;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 6px;
@@ -764,7 +764,7 @@
   }
 
   .form-doc .success-state h3 {
-    font-family: 'Times New Roman', serif;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 18px;
     margin-bottom: 6px;
   }
@@ -829,7 +829,7 @@
     <div class="url-bar">
       <div class="url-row">
         <span class="url-label">Document Title:</span>
-        <span class="url-input">If Ivan Zhao built a browser.</span>
+        <span class="url-input">The browser we needed.</span>
         <div class="globe" aria-hidden="true"></div>
       </div>
       <div class="url-row">
@@ -845,12 +845,14 @@
         <div class="tagline">THE BROWSER WE NEEDED</div>
       </div>
 
-      <h1 class="doc-title">If Ivan Zhao built a browser.</h1>
+      <h1 class="doc-title">The browser we needed.</h1>
       <div class="doc-meta-line">May '26 - fritz &amp; yongkang</div>
 
-      <p>Ivan Zhao has to be the founder we look up to the most right now. We love the way he cares about each fucking pixel. We love that he has his own philosophy and sticks to it. We love the fact that he'll only do podcasts if he directs them. We love that his office bathrooms look like those at designer hotels. We love the culture he has built at Notion. We love his taste.</p>
+      <p>We've been inside browsers our whole lives. Fritz power-usered Notion since grade 10 and owned growth projects at Enpal at 18. Yongkang won 11 hackathons in a year and was founding engineer at MozartAI and EpiMinds. We know what it means to build with computers — and to live in them.</p>
 
-      <p>So what if he (with a little bit of our own 2 cents) built a browser? How would it look?</p>
+      <p>The browser is our OS. Knowledge workers spend their whole day in one. And right now it has little personality, little memory, little taste. It waits for a prompt. It forgets everything when you close the tab. It looks identical on three billion machines.</p>
+
+      <p>We think it has more potential. Especially now. So we're building it.</p>
 
       <hr class="doc-rule" />
 
@@ -870,6 +872,16 @@
       <p>Or maybe we do need another f- browser. Knowledge workers spend all day in a browser. It's basically our OS. And right now it has little personality, little memory, little taste. It has more potential in our opinion. Especially with the resources of today.</p>
 
       <p>Just our initial thoughts. We want something better, so we are building it. <a class="open-form" data-title="follow eidos" href="#">Here</a> you can follow our updates.</p>
+
+      <hr class="doc-rule" />
+
+      <p>A few people whose work shapes how we think:</p>
+      <p>
+        <strong>Ivan Zhao</strong> — taste as a non-negotiable. The way he cares about each pixel, the culture he built at Notion.<br/>
+        <strong>Andy Matuschak</strong> — knowledge that compounds. Concept-first, evergreen, provenance-heavy.<br/>
+        <strong>The Arc team</strong> — proving that browser chrome can have a soul.<br/>
+        <strong>Nous Research</strong> — what it means for AI to reflect and consolidate, not just respond.
+      </p>
 
       <div class="footer-note">
         <span>- end of document -</span>
@@ -1326,7 +1338,7 @@
       const status = win.querySelector('.statusbar span');
       const emailInput = win.querySelector('#sub-email');
 
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = (emailInput.value || '').trim();
         const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -1335,15 +1347,32 @@
           emailInput.focus();
           return;
         }
-        // TODO: wire to Formspree/Buttondown/etc. For now, store locally + show success.
+        const submitBtn = win.querySelector('.submit-btn');
+        if (submitBtn) submitBtn.disabled = true;
+        if (status) status.textContent = 'Form: submitting...';
+        const nameVal = (win.querySelector('#sub-name').value || '').trim() || null;
         try {
-          const list = JSON.parse(localStorage.getItem('eidos_subs') || '[]');
-          list.push({ email, name: win.querySelector('#sub-name').value || '', at: new Date().toISOString() });
-          localStorage.setItem('eidos_subs', JSON.stringify(list));
-        } catch (_) {}
-        formState.style.display = 'none';
-        successState.classList.add('shown');
-        if (status) status.textContent = 'Form: submitted.';
+          const res = await fetch('https://wwfcgiekddkllvsksknr.supabase.co/rest/v1/subscribers', {
+            method: 'POST',
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZmNnaWVrZGRrbGx2c2tza25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDQyMjAsImV4cCI6MjA5NTcyMDIyMH0.e9t-8ipFAzW8MUhpAxJa112acR6D-XfgENlBmUz3_YY',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZmNnaWVrZGRrbGx2c2tza25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDQyMjAsImV4cCI6MjA5NTcyMDIyMH0.e9t-8ipFAzW8MUhpAxJa112acR6D-XfgENlBmUz3_YY',
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ email, name: nameVal })
+          });
+          if (res.ok || res.status === 409) {
+            formState.style.display = 'none';
+            successState.classList.add('shown');
+            if (status) status.textContent = 'Form: submitted.';
+          } else {
+            throw new Error(res.status);
+          }
+        } catch (_) {
+          if (status) status.textContent = 'Form: error — please try again.';
+          if (submitBtn) submitBtn.disabled = false;
+        }
       });
     }
 
