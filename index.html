@@ -63,6 +63,19 @@
   /* Top-left site mark */
 
 
+  /* Top-left site mark */
+  .sitemark {
+    position: fixed;
+    top: 24px;
+    left: 28px;
+    z-index: 5;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-style: normal;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+
   /* Top-right meta */
   .meta {
     position: fixed;
@@ -785,6 +798,7 @@
   /* ── Mobile: compact desktop — keep all the vibes ─ */
   @media (max-width: 700px) {
 
+    .sitemark { display: none; }
     /* Keep the desktop feel — body stays locked */
     html, body { overflow: hidden; height: 100%; }
 
@@ -868,6 +882,7 @@
 </head>
 <body>
 
+  <div class="sitemark">eidos.</div>
   <div class="meta">est. 2026 — berlin / paris</div>
 
   <div class="browser" role="region" aria-label="eidos document viewer">
