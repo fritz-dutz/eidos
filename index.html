@@ -1104,6 +1104,7 @@
 
     function minimizeWindow(win) {
       if (win.classList.contains('minimized') || win.classList.contains('minimizing')) return;
+      detachCentering(win); // convert CSS centering to absolute pos before animating
       var item = document.createElement('div');
       item.className = 'dock-item';
       item.innerHTML = '<span class="dock-folder" aria-hidden="true"></span><span class="dock-label"></span>';
