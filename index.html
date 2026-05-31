@@ -259,7 +259,7 @@
   }
 
   .url-label {
-    width: 110px;
+    width: 50px;
     font-size: 11px;
     color: var(--ink);
   }
@@ -273,9 +273,7 @@
     padding: 2px 5px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
     color: var(--ink);
     user-select: text;
   }
@@ -369,9 +367,7 @@
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
     color: var(--ink);
     line-height: 1.15;
   }
@@ -815,7 +811,7 @@
     /* URL bar — hide the URL row, keep title only */
     .url-bar { padding: 3px 5px; gap: 2px; }
     .url-row + .url-row { display: none; }
-    .url-label { width: 78px; font-size: 10px; }
+    .url-label { width: 42px; font-size: 10px; }
     .url-input { font-size: 10px; }
     .globe { width: 28px; height: 28px; flex-shrink: 0; }
 
@@ -827,7 +823,7 @@
     h1.doc-title { font-size: 15px; }
     .doc-meta-line { font-size: 10px; }
     .document ol { margin-left: 0; }
-    .footer-note { flex-direction: column; gap: 4px; font-size: 10px; }
+    .footer-note { font-size: 10px; }
 
     /* Statusbar */
     .statusbar { font-size: 10px; padding: 2px 6px; }
@@ -910,7 +906,7 @@
 
     <div class="url-bar">
       <div class="url-row">
-        <span class="url-label">Document Title:</span>
+        <span class="url-label">Title:</span>
         <span class="url-input">The last browser for knowledge workers.</span>
         <div class="globe" aria-hidden="true"></div>
       </div>
@@ -959,7 +955,7 @@
 
       <div class="footer-note">
         <span>- end of document -</span>
-        <span><a href="https://fritzdutz.com" class="open-window" data-title="fritzdutz.com" data-url="https://fritzdutz.com" data-dock="fritzdutz|.com">fritz</a> &amp; <a href="https://yongkang.dev" class="open-window" data-title="yongkang.dev" data-url="https://yongkang.dev" data-dock="yongkang|.dev">yongkang</a></span>
+        <span><a href="https://fritzdutz.com" class="open-window" data-title="fritzdutz.com" data-url="https://fritzdutz.com" data-dock="fritzdutz|.com">Fritz</a> &amp; <a href="https://yongkang.dev" class="open-window" data-title="yongkang.dev" data-url="https://yongkang.dev" data-dock="yongkang|.dev">Yongkang</a></span>
       </div>
     </div>
 
@@ -1252,7 +1248,7 @@
           <span class="tool">&#8962;</span><span class="tool">&#9673;</span><span class="tool">&#9733;</span><span class="tool">&#9113;</span><span class="tool">?</span>
         </div>
         <div class="url-bar">
-          <div class="url-row"><span class="url-label">Document Title:</span><span class="url-input">${title}</span><div class="globe"></div></div>
+          <div class="url-row"><span class="url-label">Title:</span><span class="url-input">${title}</span><div class="globe"></div></div>
           <div class="url-row"><span class="url-label">Document URL:</span><span class="url-input">${url}</span></div>
         </div>
         <div class="iframe-doc">
@@ -1293,7 +1289,7 @@
         </div>
         <div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>O</u>ptions</span><span><u>N</u>avigate</span><span><u>H</u>elp</span></div>
         <div class="url-bar">
-          <div class="url-row"><span class="url-label">Document Title:</span><span class="url-input">${title}</span><div class="globe"></div></div>
+          <div class="url-row"><span class="url-label">Title:</span><span class="url-input">${title}</span><div class="globe"></div></div>
           <div class="url-row"><span class="url-label">Document URL:</span><span class="url-input">http://www.eidos.computer/follow.html</span></div>
         </div>
         <div class="form-doc">
