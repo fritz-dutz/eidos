@@ -61,27 +61,7 @@
   }
 
   /* Top-left site mark */
-  .sitemark {
-    position: fixed;
-    top: 24px;
-    left: 28px;
-    z-index: 5;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 15px;
-    font-style: normal;
-    letter-spacing: 0;
-    color: var(--ink);
-  }
 
-  .sitemark span {
-    font-family: 'IBM Plex Mono', monospace;
-    font-style: normal;
-    font-size: 11px;
-    color: #666;
-    margin-left: 8px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
 
   /* Top-right meta */
   .meta {
@@ -112,9 +92,7 @@
     border: 2px solid var(--chrome-darker);
     box-shadow:
       inset 1px 1px 0 var(--chrome-light),
-      inset -1px -1px 0 var(--chrome-dark),
-      6px 6px 0 rgba(0,0,0,0.18),
-      18px 18px 40px rgba(0,0,0,0.15);
+      inset -1px -1px 0 var(--chrome-dark);
     display: flex;
     flex-direction: column;
     font-family: 'IBM Plex Mono', monospace;
@@ -288,12 +266,16 @@
 
   .url-input {
     flex: 1;
+    min-width: 0;
     background: #FFFFFF;
     border: 1px solid var(--chrome-darker);
     box-shadow: inset 1px 1px 0 var(--chrome-dark), inset -1px -1px 0 var(--chrome-light);
     padding: 2px 5px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--ink);
     user-select: text;
   }
@@ -387,6 +369,9 @@
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--ink);
     line-height: 1.15;
   }
@@ -419,8 +404,9 @@
   }
 
   .document ol {
-    margin: 12px 0 16px 26px;
+    margin: 12px 0 16px 0;
     padding: 0;
+    list-style-position: inside;
   }
 
   .document ol li {
@@ -442,8 +428,9 @@
     color: #555;
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
+    align-items: baseline;
   }
 
   .statusbar {
@@ -806,7 +793,6 @@
     html, body { overflow: hidden; height: 100%; }
 
     /* Sitemark smaller, tucked in */
-    .sitemark { font-size: 11px; top: 14px; left: 12px; }
     .meta { display: none; }
 
     /* Main window — fit the screen with breathing room */
@@ -840,7 +826,7 @@
     .logo-dot { width: 4px; height: 4px; }
     h1.doc-title { font-size: 15px; }
     .doc-meta-line { font-size: 10px; }
-    .document ol { margin-left: 18px; }
+    .document ol { margin-left: 0; }
     .footer-note { flex-direction: column; gap: 4px; font-size: 10px; }
 
     /* Statusbar */
@@ -886,7 +872,6 @@
 </head>
 <body>
 
-  <div class="sitemark">eidos.</div>
   <div class="meta">est. 2026 — berlin / paris</div>
 
   <div class="browser" role="region" aria-label="eidos document viewer">
