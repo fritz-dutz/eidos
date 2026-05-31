@@ -799,15 +799,81 @@
   }
   .tool.refresh-btn.spinning { display: inline-block; animation: toolSpin 0.4s linear; }
 
+  /* ── Mobile experience (≤700px) ───────────────────── */
   @media (max-width: 700px) {
-    .browser { height: calc(100vh - 60px); }
-    .document { padding: 14px 14px 20px; font-size: 11px; }
-    .doc-banner .logo { font-size: 28px; letter-spacing: 3px; }
-    h1.doc-title { font-size: 16px; }
-    .menubar { gap: 8px; font-size: 11px; }
-    .url-label { width: 90px; }
-    .sitemark { font-size: 13px; }
-    .credits { font-size: 9px; }
+
+    /* Body: scrollable, no overflow hidden */
+    html, body { overflow: auto; height: auto; }
+
+    /* Hide desktop furniture */
+    .sitemark, .meta, .credits, .dock { display: none !important; }
+
+    /* Hide the Mosaic chrome layers */
+    .menubar, .toolbar, .url-bar, .resize-handle { display: none !important; }
+
+    /* Browser window fills the screen */
+    .browser {
+      position: relative !important;
+      top: 0 !important; left: 0 !important;
+      width: 100vw !important; height: auto !important;
+      min-height: 100vh !important;
+      transform: none !important;
+      box-shadow: none !important;
+      border: none !important;
+      background: var(--paper);
+    }
+
+    /* Titlebar — slim, no drag cursor */
+    .titlebar {
+      background: linear-gradient(to bottom, #8B6726, var(--titlebar));
+      padding: 10px 16px;
+      cursor: default;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .titlebar-icon { display: none; }
+    .tb-btn.min-btn, .tb-btn.max-btn { display: none; }
+    .tb-btn.close-btn { display: none; }
+    .titlebar-left span { font-size: 13px; }
+
+    /* Document: full-width, readable */
+    .document {
+      padding: 28px 20px 48px;
+      font-size: 13px;
+      line-height: 1.6;
+      border: none !important;
+      box-shadow: none !important;
+      background: var(--paper);
+      overflow-y: visible;
+      height: auto;
+    }
+
+    /* Banner */
+    .doc-banner { margin-bottom: 20px; padding: 16px 0; }
+    .doc-banner .logo { font-size: 36px; letter-spacing: 3px; }
+    .doc-banner .tagline { font-size: 9px; letter-spacing: 3px; }
+    .logo-dot { width: 5px; height: 5px; }
+
+    /* Typography */
+    h1.doc-title { font-size: 17px; margin-bottom: 6px; }
+    .doc-meta-line { font-size: 11px; margin-bottom: 16px; }
+    .document p { font-size: 13px; margin-bottom: 16px; }
+    .document ol { margin: 14px 0 18px 20px; }
+    .document ol li { font-size: 13px; margin-bottom: 12px; }
+
+    /* Footer */
+    .footer-note { font-size: 12px; flex-direction: column; gap: 6px; }
+
+    /* Statusbar */
+    .statusbar { font-size: 11px; padding: 4px 10px; }
+
+    /* Sub-windows: prevent spawning offscreen — handled via JS */
+    .sub-browser { display: none !important; }
+
+    /* Form page */
+    .form-page { padding: 24px 20px 36px; }
+
   }
 
   /* Minimize / restore animations */
@@ -947,6 +1013,7 @@
 
 <script>
   (function () {
+    var isMobile = window.innerWidth <= 700 || ('ontouchstart' in window && window.innerWidth <= 900);
     var topZ = 10, spawnOffset = 0;
     var siteWindows = {}, formWindowRef = null;
 
@@ -971,6 +1038,7 @@
     }
 
     function attachDrag(win) {
+      if (isMobile) return;
       var tb = win.querySelector('.titlebar');
       if (!tb) return;
       var drag = false, ox = 0, oy = 0;
@@ -1005,6 +1073,7 @@
     }
 
     function attachResize(win) {
+      if (isMobile) return;
       var h = win.querySelector('.resize-handle');
       if (!h) return;
       var res = false, sx = 0, sy = 0, sw = 0, sh = 0;
@@ -1186,6 +1255,7 @@
 
     function spawnSiteWindow(title, url, opts) {
       opts = opts || {};
+      if (isMobile) { window.open(url, '_blank', 'noopener'); return; }
       // Reuse existing window if already open
       if (siteWindows[url] && document.body.contains(siteWindows[url])) {
         restoreWindow(siteWindows[url]); return;
@@ -1235,6 +1305,11 @@
     }
 
     function spawnFormWindow(title) {
+      if (isMobile) {
+        var fp = document.querySelector('.form-page');
+        if (fp) { fp.style.display = ''; fp.scrollIntoView({ behavior: 'smooth' }); }
+        return;
+      }
       if (formWindowRef && document.body.contains(formWindowRef)) {
         restoreWindow(formWindowRef); return;
       }
